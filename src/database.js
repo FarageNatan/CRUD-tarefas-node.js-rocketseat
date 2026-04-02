@@ -2,7 +2,6 @@
 
 Nele que vão ser "implementadas" a lógica para as operações de CRUD(Create, Read, Update e Delete). 
 */
-
 import fs from 'node:fs/promises'
 
 const caminhoBD = new URL('db.json', import.meta.url)
@@ -21,4 +20,18 @@ export class Database {
     #persist() {
         fs.writeFile(caminhoBD, JSON.stringify(this.#database))
     }
+
+    select(table){
+        return this.#database[table] ?? []
+    }
+
+    insert(table, data) {
+        if(!this.#database[table]) {
+            this.#database[table] = []
+        }
+        this.#database[table].push(data)
+        this.#persist()
+        return data
+    }
+
 }

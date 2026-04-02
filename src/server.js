@@ -12,6 +12,8 @@ const server = http.createServer(async (req, res) => { //Factory Function(retorn
     })
 
     
+
+    
 }) 
 
 server.listen(2608) //A funcao do nosso objeto server eh ouvir as requisições que chegam pela rede.
