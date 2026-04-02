@@ -4,13 +4,13 @@ Nele que vão ser "implementadas" a lógica para as operações de CRUD(Create, 
 */
 import fs from 'node:fs/promises'
 
-const caminhoBD = new URL('db.json', import.meta.url)
+const databasePath = new URL('db.json', import.meta.url)
 
 export class Database {
     #database = {}
 
     constructor() {
-        fs.readFile(caminhoBD, 'utf-8').then(data => {
+        fs.readFile(databasePath, 'utf-8').then(data => {
             this.#database = JSON.parse(data)
         }).catch(() => {
             this.#persist()
@@ -18,7 +18,7 @@ export class Database {
     }
 
     #persist() {
-        fs.writeFile(caminhoBD, JSON.stringify(this.#database))
+        fs.writeFile(databasePath, JSON.stringify(this.#database))
     }
 
     select(table){
@@ -34,4 +34,25 @@ export class Database {
         return data
     }
 
+    update(table, id, data) {
+        const rowIndex = this.#database[table]?.findIndex(row => row.id === id)
+
+        if(rowIndex > -1){
+            this.#database[table][rowIndex] = {
+                ...this.#database[table][rowIndex],
+                ...data,
+                update_at: new Date().toISOString()
+            }
+            this.#persist()
+        }
+    }
+
+    delete(table, id) {
+        const rowIndex = this.#database[table]?.findIndex(row => row.id === id)
+
+        if(rowIndex > -1){
+            this.#database[table].splice(rowIndex, 1)
+            this.#persist()
+        }
+    }
 }
