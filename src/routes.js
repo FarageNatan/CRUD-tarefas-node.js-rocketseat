@@ -28,7 +28,7 @@ export const routes = [
 
             if(!title || !description) {
                 console.log("Validação falhou: title ou description ausente")
-                return res.writeHead(400).end('Title and description are required')
+                return res.writeHead(400).end('Title e descricao sao obrigatorios')
             }
 
             const task = {
@@ -46,4 +46,35 @@ export const routes = [
             return res.writeHead(201).end()
         }
     },
+    {
+        method: 'PUT',
+        path: buildRoutePath('/tasks/:id'),
+        handler: (req, res) => {
+            const { id } = req.params
+            const { title, description } = req.body || {}
+
+            const taskExists = database.select('tasks').some(t => t.id === id)
+            if(!taskExists) {
+                return res.writeHead(404).end('Tarefa nao encontrada')
+            }
+
+            database.update('tasks', id, { title, description })
+            return res.writeHead(204).end('Tafera Atualizada')
+        }
+    },
+    {
+        method: 'DELETE',
+        path: buildRoutePath('/tasks/:id'),
+        handler: (req, res) => {
+            const { id } = req.params
+
+            const taskExists = database.select('tasks').some(t => t.id === id)
+            if(!taskExists) {
+                return res.writeHead(404).end('Tarefa nao encontrada')
+            }
+
+            database.delete('tasks', id)
+            return res.writeHead(204).end('Tarefa excluida')
+        }
+    }
 ]
