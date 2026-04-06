@@ -11,9 +11,16 @@ const server = http.createServer(async (req, res) => { //Factory Function(retorn
         return route.method === method && route.path.test(url)
     })
 
-    
+    if (route) {
 
-    
+        const routeParams = req.url.match(route.path)
+        req.params = { ...routeParams.groups }
+
+        return route.handler(req, res)
+    }
+
+    console.log(`Nenhuma rota encontrada para ${method} ${url}`)
+    return res.writeHead(404).end('NOT FOUND')
 }) 
 
 server.listen(2608) //A funcao do nosso objeto server eh ouvir as requisições que chegam pela rede.
