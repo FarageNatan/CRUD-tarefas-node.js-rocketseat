@@ -63,6 +63,25 @@ export const routes = [
         }
     },
     {
+        method: 'PATCH',
+        path: buildRoutePath('/tasks/:id/complete'),
+        handler: (req, res) => {
+            const { id } = req.params
+            const tasks = database.select('tasks')
+            const task = tasks.find(t => t.id === id)
+
+            if (!task) {
+                return res.writeHead(404).end('Task not found')
+            }
+
+            const completed_at = new Date().toISOString()
+            database.update('tasks', id, { completed_at })
+
+            console.log(`PATCH /tasks/${id}/complete → completed_at agora é ${completed_at ? 'definido' : 'null'}`)
+            return res.writeHead(204).end()
+        }
+    },
+    {
         method: 'DELETE',
         path: buildRoutePath('/tasks/:id'),
         handler: (req, res) => {
